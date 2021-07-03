@@ -10,14 +10,15 @@ const MyPosts = (props) => {
   let newPostElement = React.createRef();
 
   let addPost = () => {
-      props.addPost();
+    // props.addPost();
+    props.dispatch({type: "ADD-POST"});
   };
 
   let onPostChange = () => {
     let text = newPostElement.current.value;
-    props.updateNewPostText(text);
+    // props.updateNewPostText(text);
+    props.dispatch({type: "UPDATE-NEW-POST-TEXT", newText: text});
   };
-
   return (
     <div className={style.postsBlock}>
       <h3>My posts</h3>
