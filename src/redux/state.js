@@ -1,6 +1,9 @@
 const ADD_POST = "ADD-POST";
 const UPDATE_NEW_POST_TEXT = "UPDATE-NEW-POST-TEXT";
 
+const UPDATE_NEW_MESSAGE_TEXT = "UPDATE-NEW-MESSAGE-TEXT";
+const SEND_MESSAGE = "SEND-MESSAGE";
+
 let store = {
   _state: {
     profilePage: {
@@ -27,6 +30,7 @@ let store = {
         { id: 5, name: "Irka" },
         { id: 6, name: "Sasha" },
       ],
+      newMessageText: "",
     },
   },
   _callsubscriber() {
@@ -42,27 +46,47 @@ let store = {
 
   dispatch(action) {
     if (action.type === ADD_POST) {
-      let newPost = {
-        id: 5,
-        message: this._state.profilePage.newPostText,
-        likesCount: 0,
-      };
-      this._state.profilePage.posts.unshift(newPost);
-      this._state.profilePage.newPostText = "";
-      this._callsubscriber(this._state);
+      if (this._state.profilePage.newPostText !== "") {
+        let newPost = {
+          id: 5,
+          message: this._state.profilePage.newPostText,
+          likesCount: 0,
+        };
+        this._state.profilePage.posts.unshift(newPost);
+        this._state.profilePage.newPostText = "";
+        this._callsubscriber(this._state);
+      }
     } else if (action.type === UPDATE_NEW_POST_TEXT) {
       this._state.profilePage.newPostText = action.newText;
+      this._callsubscriber(this._state);
+    } else if (action.type === UPDATE_NEW_MESSAGE_TEXT) {
+      this._state.dialogsPage.newMessageText = action.newMessage;
+      this._callsubscriber(this._state);
+    } else if (action.type === SEND_MESSAGE) {
+      let text = this._state.dialogsPage.newMessageText;
+      this._state.dialogsPage.messages.unshift({ id: 7, message: text });
+      console.log(this._state.dialogsPage.messages);
+      this._state.dialogsPage.newMessageText = "";
       this._callsubscriber(this._state);
     }
   },
 };
 
 export const addPostActionCreator = () => ({
-  type: "ADD-POST",
+  type: ADD_POST,
 });
 
 export const updateNewPostTextActionCreator = (text) => ({
-  type: "UPDATE-NEW-POST-TEXT",
+  type: UPDATE_NEW_POST_TEXT,
   newText: text,
+});
+
+export const sendMessageCreator = () => ({
+  type: SEND_MESSAGE,
+});
+
+export const updateNewMessageTextCreator = (message) => ({
+  type: UPDATE_NEW_MESSAGE_TEXT,
+  newMessage: message,
 });
 export default store;
