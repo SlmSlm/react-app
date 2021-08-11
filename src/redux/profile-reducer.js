@@ -10,8 +10,6 @@ let initialState = {
 };
 
 const profileReducer = (state = initialState, action) => {
-  debugger;
-  // eslint-disable-next-line default-case
   switch (action.type) {
     case ADD_POST:
       if (state.newPostText !== "") {
