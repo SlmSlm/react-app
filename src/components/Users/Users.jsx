@@ -45,7 +45,7 @@ let Users = (props) => {
                 <button
                   disabled={props.followingInProgress.some((id) => id === u.id)}
                   onClick={() => {
-                    props.unfollow(u.id);
+                    props.follow(u.id);
                   }}
                 >
                   Unfollow
@@ -54,7 +54,7 @@ let Users = (props) => {
                 <button
                   disabled={props.followingInProgress.some((id) => id === u.id)}
                   onClick={() => {
-                    props.follow(u.id);
+                    props.unfollow(u.id);
                   }}
                 >
                   Follow
