@@ -52,6 +52,7 @@ const Login = (props) => {
 };
 
 const mapStateToProps = (state) => ({
+  captchaUrl: state.auth.captchaUrl,
   isAuth: state.auth.isAuth,
 });
 
