@@ -1,20 +1,18 @@
-import React from "react";
-import { Component } from "react";
+import React, { Component } from "react";
+import { connect, Provider } from "react-redux";
+import { BrowserRouter, HashRouter, Route, withRouter } from "react-router-dom";
+import { compose } from "redux";
 import "./App.css";
-import Navbar from "./components/Navbar/Navbar";
-
-import { BrowserRouter, Route, withRouter } from "react-router-dom";
-import UsersContainer from "./components/Users/UsersContainer";
-
+import Preloader from "./components/Common/Preloader/Preloader";
 import HeaderContainer from "./components/Header/HeaderContainer";
 import LoginPage from "./components/Login/Login";
-import { connect } from "react-redux";
-import { initializeApp } from "./redux/app-reducer";
-import { compose } from "redux";
-import Preloader from "./components/Common/Preloader/Preloader";
-import { Provider } from "react-redux";
-import store from "./redux/redux-store";
+import Navbar from "./components/Navbar/Navbar";
+import UsersContainer from "./components/Users/UsersContainer";
 import { withSuspense } from "./hoc/withSuspense";
+import { initializeApp } from "./redux/app-reducer";
+import store from "./redux/redux-store";
+
+
 
 const DialogsContainer = React.lazy(() =>
   import("./components/Dialogs/DialogsContainer")
@@ -62,11 +60,11 @@ let AppContainer = compose(
 
 const SamuraiJSApp = (props) => {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Provider store={store}>
         <AppContainer />
       </Provider>
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 

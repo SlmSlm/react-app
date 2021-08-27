@@ -1,5 +1,5 @@
 import { stopSubmit } from "redux-form";
-import { authAPI } from "../api/api";
+import { authAPI, securityAPI } from "../api/api";
 
 const SET_USER_DATA = "samurai/network/auth/SET_USER_DATA";
 
@@ -8,6 +8,7 @@ let initialState = {
   email: null,
   login: null,
   isAuth: false,
+  captchaUrl: null
 };
 
 const authReducer = (state = initialState, action) => {
@@ -28,7 +29,7 @@ export const setAuthUserData = (userID, email, login, isAuth) => ({
 });
 
 export const getAuthUserData = () => async (dispatch) => {
-  let response = await authAPI.me();
+  const response = await authAPI.me();
   if (response.data.resultCode === 0) {
     let { id, login, email } = response.data.data;
     dispatch(setAuthUserData(id, email, login, true));
@@ -36,7 +37,7 @@ export const getAuthUserData = () => async (dispatch) => {
 };
 
 export const login = (email, password, rememberMe) => async (dispatch) => {
-  let response = await authAPI.login(email, password, rememberMe);
+  const response = await authAPI.login(email, password, rememberMe);
   if (response.data.resultCode === 0) {
     dispatch(getAuthUserData());
   } else {
@@ -46,6 +47,17 @@ export const login = (email, password, rememberMe) => async (dispatch) => {
         : "Common error";
     dispatch(stopSubmit("login", { _error: message }));
   }
+};
+
+export const getCaptchaUrl = (email, password, rememberMe) => async (dispatch) => {
+  const response = await securityAPI.getCaptchaUrl();
+  const captchaUrl = response.data.url
+
+    let message =
+      response.data.messages.length > 0
+        ? response.data.messages[0]
+        : "Common error";
+    dispatch(stopSubmit("login", { _error: message }));
 };
 
 export const logout = () => async (dispatch) => {
