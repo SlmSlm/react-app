@@ -50,6 +50,11 @@ export const login = (email, password, rememberMe, captcha) => async (dispatch) 
     if (response.data.resultCode === 10) {
       dispatch(getCaptchaUrl());
   }
+    let message =
+      response.data.messages.length > 0
+        ? response.data.messages[0]
+        : "Common error";
+    dispatch(stopSubmit("login", { _error: message }));
   }
 };
 
@@ -58,8 +63,6 @@ export const getCaptchaUrl = () => async (dispatch) => {
   const captchaUrl = response.data.url;
   dispatch(getCaptchaUrlSuccess(captchaUrl));
 }
-
-
 
 export const logout = () => async (dispatch) => {
   let response = await authAPI.logout();

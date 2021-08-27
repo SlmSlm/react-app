@@ -23,8 +23,8 @@ const LoginForm = ({ handleSubmit, error, captchaUrl }) => {
         "Remember me"
       )}
 
-{ captchaUrl && <img src={captchaUrl} />}
-            { captchaUrl &&  createField("Symbols from image", "captcha", [required], Input, {}) }
+      { captchaUrl && <img src={captchaUrl} alt={"captcha"}/>}
+      { captchaUrl &&  createField("Symbols from image", "captcha", [required], Input, {}) }
       {error && <div className={styles.formSummaryError}>{error}</div>}
       <div>
         <button>Login</button>
