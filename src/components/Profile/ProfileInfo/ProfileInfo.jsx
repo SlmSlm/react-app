@@ -5,6 +5,52 @@ import ProfileDataForm from "./ProfileDataForm";
 import styles from "./ProfileInfo.module.css";
 import ProfileStatusWithHooks from "./ProfileStatusWithHooks";
 
+const Contact = ({ contactTitle, contactValue }) => {
+  return (
+    <div className={styles.contacts}>
+      <b>{contactTitle}</b>:{contactValue}
+    </div>
+  );
+};
+
+const ProfileData = ({ profile, isOwner, goToEditMode }) => {
+  return (
+    <div>
+      {isOwner && (
+        <div>
+          <button onClick={goToEditMode}>Edit</button>
+        </div>
+      )}
+      <div>
+        <b>Full name</b>:{profile.fullName}
+      </div>
+      <div>
+        <b>Looking for a job</b>: {profile.lookingForAJob ? "Yes" : "No"}
+      </div>
+      {profile.lookingForAJob && (
+        <div>
+          <b>My professional skills</b>: {profile.lookingForAJobDescription}
+        </div>
+      )}
+      <div>
+        <b>About me</b>: {profile.aboutMe}
+      </div>
+      <div>
+        <b>Contacts </b>:
+        {Object.keys(profile.contacts).map((key) => {
+          return (
+            <Contact
+              key={key}
+              contactTitle={key}
+              contactValue={profile.contacts[key]}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 const ProfileInfo = ({
   profile,
   status,
@@ -26,54 +72,12 @@ const ProfileInfo = ({
   };
 
   const onSubmit = (formData) => {
-    saveProfile(formData);
-  };
-
-  const Contact = ({ contactTitle, contactValue }) => {
-    return (
-      <div className={styles.contacts}>
-        <b>{contactTitle}</b>:{contactValue}
-      </div>
+    saveProfile(formData).then(
+        () => {
+            setEditMode(false);
+        }
     );
-  };
-
-  const ProfileData = ({ profile, isOwner, goToEditMode }) => {
-    return (
-      <div>
-        {isOwner && (
-          <div>
-            <button onClick={goToEditMode}>Edit</button>
-          </div>
-        )}
-        <div>
-          <b>Full name</b>:{profile.fullName}
-        </div>
-        <div>
-          <b>Looking for a job</b>: {profile.lookingForAJob ? "Yes" : "No"}
-        </div>
-        {profile.lookingForAJob && (
-          <div>
-            <b>My professional skills</b>: {profile.lookingForAJobDescription}
-          </div>
-        )}
-        <div>
-          <b>About me</b>: {profile.aboutMe}
-        </div>
-        <div>
-          <b>Contacts </b>:
-          {Object.keys(profile.contacts).map((key) => {
-            return (
-              <Contact
-                key={key}
-                contactTitle={key}
-                contactValue={profile.contacts[key]}
-              />
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
+}
 
   return (
     <div>
@@ -86,7 +90,11 @@ const ProfileInfo = ({
         {isOwner && <input type="file" onChange={onMainPhotoSelected} />}
 
         {editMode ? (
-          <ProfileDataForm profile={profile} onSubmit={onSubmit} />
+          <ProfileDataForm
+            initialValues={profile}
+            profile={profile}
+            onSubmit={onSubmit}
+          />
         ) : (
           <ProfileData
             goToEditMode={() => {
