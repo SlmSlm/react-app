@@ -2,6 +2,7 @@ import { stopSubmit } from "redux-form";
 import { authAPI, securityAPI } from "../api/api";
 
 const SET_USER_DATA = "samurai/network/auth/SET_USER_DATA";
+const GET_CAPTCHA_URL_SUCCESS = 'samurai-network/auth/GET_CAPTCHA_URL_SUCCESS';
 
 let initialState = {
   userID: null,
@@ -14,6 +15,7 @@ let initialState = {
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_USER_DATA:
+      case GET_CAPTCHA_URL_SUCCESS:
       return {
         ...state,
         ...action.payload,
@@ -28,6 +30,10 @@ export const setAuthUserData = (userID, email, login, isAuth) => ({
   payload: { userID, email, login, isAuth },
 });
 
+export const getCaptchaUrlSuccess = (captchaUrl) => ({
+  type: GET_CAPTCHA_URL_SUCCESS, payload: {captchaUrl}
+});
+
 export const getAuthUserData = () => async (dispatch) => {
   const response = await authAPI.me();
   if (response.data.resultCode === 0) {
@@ -36,29 +42,24 @@ export const getAuthUserData = () => async (dispatch) => {
   }
 };
 
-export const login = (email, password, rememberMe) => async (dispatch) => {
-  const response = await authAPI.login(email, password, rememberMe);
+export const login = (email, password, rememberMe, captcha) => async (dispatch) => {
+  const response = await authAPI.login(email, password, rememberMe, captcha);
   if (response.data.resultCode === 0) {
     dispatch(getAuthUserData());
   } else {
-    let message =
-      response.data.messages.length > 0
-        ? response.data.messages[0]
-        : "Common error";
-    dispatch(stopSubmit("login", { _error: message }));
+    if (response.data.resultCode === 10) {
+      dispatch(getCaptchaUrl());
+  }
   }
 };
 
-export const getCaptchaUrl = (email, password, rememberMe) => async (dispatch) => {
+export const getCaptchaUrl = () => async (dispatch) => {
   const response = await securityAPI.getCaptchaUrl();
-  const captchaUrl = response.data.url
+  const captchaUrl = response.data.url;
+  dispatch(getCaptchaUrlSuccess(captchaUrl));
+}
 
-    let message =
-      response.data.messages.length > 0
-        ? response.data.messages[0]
-        : "Common error";
-    dispatch(stopSubmit("login", { _error: message }));
-};
+
 
 export const logout = () => async (dispatch) => {
   let response = await authAPI.logout();
