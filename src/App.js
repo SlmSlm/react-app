@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 import { connect, Provider } from "react-redux";
-import { HashRouter, Route, withRouter } from "react-router-dom";
+import {
+  HashRouter,
+  Redirect,
+  Route,
+  Switch,
+  withRouter,
+} from "react-router-dom";
 import { compose } from "redux";
 import "./App.css";
 import Preloader from "./components/Common/Preloader/Preloader";
@@ -12,8 +18,6 @@ import { withSuspense } from "./hoc/withSuspense";
 import { initializeApp } from "./redux/app-reducer";
 import store from "./redux/redux-store";
 
-
-
 const DialogsContainer = React.lazy(() =>
   import("./components/Dialogs/DialogsContainer")
 );
@@ -23,8 +27,19 @@ const ProfileContainer = React.lazy(() =>
 );
 
 class App extends Component {
+  catchAllUnhandledErrors = (promiseRejectionEvent) => {
+    alert("OOOOPSYK");
+    // console.error(promiseRejectionEvent);
+  };
   componentDidMount() {
     this.props.initializeApp();
+    window.addEventListener("unhandledrejection", this.catchAllUnhandledErrors);
+  }
+  componentWillUnmount() {
+    window.removeEventListener(
+      "unhandledrejection",
+      this.catchAllUnhandledErrors
+    );
   }
 
   render() {
@@ -36,13 +51,18 @@ class App extends Component {
         <HeaderContainer />
         <Navbar />
         <div className="app-wrapper-content">
-          <Route
-            path="/profile/:userID?"
-            render={withSuspense(ProfileContainer)}
-          />
-          <Route path="/dialogs" render={withSuspense(DialogsContainer)} />
-          <Route path="/users" render={() => <UsersContainer />} />
-          <Route path="/login" render={() => <LoginPage />} />
+          <Switch>
+            {/* <Route exact path="/" render={withSuspense(ProfileContainer)} /> */}
+            <Route exact path="/" render={() => <Redirect to={"/profile"} />} />
+            <Route
+              path="/profile/:userID?"
+              render={withSuspense(ProfileContainer)}
+            />
+            <Route path="/dialogs" render={withSuspense(DialogsContainer)} />
+            <Route path="/users" render={() => <UsersContainer />} />
+            <Route path="/login" render={() => <LoginPage />} />
+            <Route path="*" render={() => <div>Oooops</div>} />
+          </Switch>
         </div>
       </div>
     );
