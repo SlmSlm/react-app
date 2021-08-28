@@ -23,8 +23,9 @@ const LoginForm = ({ handleSubmit, error, captchaUrl }) => {
         "Remember me"
       )}
 
-      { captchaUrl && <img src={captchaUrl} alt={"captcha"}/>}
-      { captchaUrl &&  createField("Symbols from image", "captcha", [required], Input, {}) }
+      {captchaUrl && <img src={captchaUrl} alt={"captcha"} />}
+      {captchaUrl &&
+        createField("Symbols from image", "captcha", [required], Input, {})}
       {error && <div className={styles.formSummaryError}>{error}</div>}
       <div>
         <button>Login</button>
@@ -37,7 +38,12 @@ const LoginReduxForm = reduxForm({ form: "login" })(LoginForm);
 
 const Login = (props) => {
   const onSubmit = (formData) => {
-    props.login(formData.email, formData.password, formData.rememberMe, formData.captcha);
+    props.login(
+      formData.email,
+      formData.password,
+      formData.rememberMe,
+      formData.captcha
+    );
   };
 
   if (props.isAuth) {
@@ -46,7 +52,9 @@ const Login = (props) => {
   return (
     <div>
       <h1>LOGIN</h1>
-      <LoginReduxForm onSubmit={onSubmit} captchaUrl={props.captchaUrl}/>
+      If you are here for the first time, use <br /> login: free@samuraijs.com
+      <br /> pass: free
+      <LoginReduxForm onSubmit={onSubmit} captchaUrl={props.captchaUrl} />
     </div>
   );
 };
